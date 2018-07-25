@@ -1,41 +1,42 @@
 <?php
     /* Core extractor function */
     function extractor($file){
-        $lines = file($file, FILE_IGNORE_NEW_LINES);
-
-        $data = array();
-
+        //$lines = file($file, FILE_IGNORE_NEW_LINES);
+        $handle = fopen($file, "r");
         $current_key = "";
 
-        /* Check each line */    
-        foreach($lines as $key => $line){
-            /* Is there a current key? */
-            /* If yes, check if we're at the end of the chunk */
-            $linecheck = explode("_",$line);
-            if($current_key != ""){
-                if ($linecheck[0] == "END"){
-                    $current_key = "";
-                } else {
-                    $data[$current_key][] = explode(" ",$line);
+        if($handle){
+            /* Check each line */
+            while(($line = fgets($handle)) !== false){
+                /* Is there a current key? */
+                /* If yes, check if we're at the end of the chunk */
+                echo $line;
+                $linecheck = explode("_",$line);
+                if($current_key != ""){
+                    if ($linecheck[0] == "END"){                        
+                        $current_key = "";
+                    } else {
+                        /* If not, write the line */
+                        // Open the CSV for writing
+                        $filename = "outputs/".$current_key."_".$file.".csv";
+                        $fp = fopen($filename, "a");
+                        $data = explode(" ",$line);
+                        fputcsv($fp,$data);
+                        fclose($fp);
+                    }
+                }
+                
+                /* Check if this is the beginning of a chunk */
+                if($linecheck[0] == "BEGIN"){
+                    $current_key = str_replace(" ","_",$linecheck[1]);
+                    // Need to remove carriage returns!
+                    $current_key = str_replace(array("\r", "\n"), '', $current_key);            
                 }
             }
-            /* If not, write the line */
-            /* Check if this is the beginning of a chunk */
-            if($linecheck[0] == "BEGIN"){
-                $current_key = str_replace(" ","_",$linecheck[1]);
-            }
-        }
 
-        /* Write the files */
-        foreach($data as $key => $chunk){
-            $filename = "outputs/".$key."_".$file.".csv";
-            $fp = fopen($filename, "w");
-
-            foreach($chunk as $line){
-                fputcsv($fp, $line);
-            }
-
-            fclose($fp);
-        }
+            return("File successfully processed...");
+        } else {
+            return("Could not open file...");
+        }            
     }
 ?>

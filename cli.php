@@ -8,5 +8,19 @@
         exit;
     }
 
-    extractor($file);
+    if($file == "batch"){
+        // Example of batch reading multiple files
+        echo "Preparing batch process...";
+        //Get the files in the batch folder
+        $files = scandir("batch");
+        //Shift the first two elements off the list of files
+        array_shift($files);
+        array_shift($files);
+        foreach($files as $awstats){
+            echo "Processing ".$awstats."...";
+            echo extractor("batch/".$awstats);
+        }
+    } else {
+        echo extractor($file);
+    }
 ?>
