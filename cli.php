@@ -18,9 +18,9 @@
         array_shift($files);
         foreach($files as $awstats){
             echo "Processing ".$awstats."...";
-            echo extractor("batch/".$awstats);
+            echo extractor("batch/".$awstats, true);
         }
     } else {
-        echo extractor($file);
+        echo extractor($file, true);
     }
 ?>
