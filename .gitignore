@@ -1,2 +1,3 @@
 # Don't include data files!
 *.txt
+*.csv
