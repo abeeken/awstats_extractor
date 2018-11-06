@@ -9,6 +9,8 @@
     }
 
     if($file == "batch"){
+        
+        if(!is_dir('batch')){   mkdir('batch');    }
         // Example of batch reading multiple files
         echo "Preparing batch process...";
         //Get the files in the batch folder
@@ -21,6 +23,7 @@
             echo extractor("batch/".$awstats, true);
         }
     } else {
+         if(!is_dir('outputs')){   mkdir('outputs');   }
         echo extractor($file, true);
     }
 ?>
